@@ -1,0 +1,32 @@
+const winston = require('winston');
+const path = require('path');
+
+const logger = winston.createLogger({
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  defaultMeta: { service: 'folder-architect' },
+  transports: [
+    // Console logging
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      )
+    }),
+    // File logging - errors
+    new winston.transports.File({
+      filename: path.join('logs', 'error.log'),
+      level: 'error'
+    }),
+    // File logging - all activity
+    new winston.transports.File({
+      filename: path.join('logs', 'combined.log')
+    })
+  ]
+});
+
+module.exports = logger;

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d0f;
+      --surface:   #141418;
+      --border:    #2a2a32;
+      --accent:    #e8ff47;
+      --accent-dim:#b5c830;
+      --text:      #f0f0f0;
+      --muted:     #6b6b7e;
+      --error:     #ff5757;
+      --success:   #4dffb4;
+      --radius:    14px;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,255,71,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -200px; left: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(77,255,180,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem 3.5rem;
+      width: 100%;
+      max-width: 520px;
+      position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 40px; right: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      border-radius: 0 0 4px 4px;
+    }
+
+    /* ── Header ── */
+    .header { margin-bottom: 2.5rem; }
+
+    .tag {
+      display: inline-block;
+      font-family: var(--font-head);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(232,255,71,0.08);
+      border: 1px solid rgba(232,255,71,0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle { color: var(--muted); font-size: 0.9rem; font-weight: 300; }
+
+    /* ── Form Group ── */
+    .form-group {
+      margin-bottom: 1.4rem;
+      /* NO position:relative here — icon is placed inside .input-wrap instead */
+    }
+
+    /* Wrapper that holds input + icon together */
+    .input-wrap {
+      position: relative;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+
+    label .required { color: var(--accent); font-size: 0.9rem; }
+
+    input, select {
+      width: 100%;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 2.8rem 0.85rem 1.1rem; /* right padding for icon */
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b7e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+    }
+
+    select option { background: #1a1a22; }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(232,255,71,0.08);
+      background: #111115;
+    }
+
+    /* ── Validation States — border colour ── */
+    .form-group.is-error  .input-wrap input,
+    .form-group.is-error  .input-wrap select  {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(255,87,87,0.12);
+    }
+
+    .form-group.is-success .input-wrap input,
+    .form-group.is-success .input-wrap select {
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(77,255,180,0.10);
+    }
+
+    /* ── Field Icon (inside .input-wrap) ── */
+    .field-icon {
+      position: absolute;
+      top: 50%;
+      right: 0.9rem;
+      transform: translateY(-50%) scale(0.7);
+      font-size: 0.95rem;
+      font-style: normal;
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .form-group.is-error  .field-icon { opacity: 1; transform: translateY(-50%) scale(1); color: var(--error); }
+    .form-group.is-success .field-icon { opacity: 1; transform: translateY(-50%) scale(1); color: var(--success); }
+
+    /* ── Message text below input ── */
+    .msg {
+      font-size: 0.78rem;
+      margin-top: 0.45rem;
+      padding-left: 2px;
+      min-height: 1.1rem;
+      line-height: 1.4;
+      display: block;        /* simple block — no flex needed */
+    }
+
+    .msg.is-error   { color: var(--error);   }
+    .msg.is-success { color: var(--success);  }
+
+    /* ── Password Strength ── */
+    .strength-wrap { margin-top: 8px; }
+
+    .strength-bar {
+      display: flex;
+      gap: 4px;
+    }
+
+    .strength-bar span {
+      flex: 1;
+      height: 3px;
+      border-radius: 4px;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+
+    .strength-label {
+      font-size: 0.75rem;
+      margin-top: 5px;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+
+    /* ── Checkbox ── */
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px; height: 18px;
+      min-width: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      font-size: 0.85rem;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .checkbox-group label a { color: var(--accent); text-decoration: none; }
+
+    /* ── Submit Button ── */
+    .btn {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--accent);
+      color: #0d0d0f;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-head);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    .btn:hover {
+      background: var(--accent-dim);
+      box-shadow: 0 8px 30px rgba(232,255,71,0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn:active  { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,0.25);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin: 0 auto;
+    }
+
+    .btn.loading .btn-text { display: none; }
+    .btn.loading .spinner  { display: block; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      max-width: 340px;
+      padding: 0.9rem 1.2rem;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.4);
+      z-index: 9999;
+      /* hidden by default — off-screen right */
+      transform: translateX(calc(100% + 2rem));
+      transition: transform 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .toast.show { transform: translateX(0); }
+
+    .toast-success {
+      background: #0d2018;
+      border: 1px solid rgba(77,255,180,0.35);
+      color: var(--success);
+    }
+
+    .toast-error {
+      background: #200d0d;
+      border: 1px solid rgba(255,87,87,0.35);
+      color: var(--error);
+    }
+
+    .toast-icon { font-size: 1.1rem; font-style: normal; flex-shrink: 0; }
+
+    /* ── Success Screen ── */
+    .success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    .success-screen.active {
+      display: flex;
+      animation: fadeIn 0.5s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .checkmark-circle {
+      width: 72px; height: 72px;
+      background: rgba(77,255,180,0.08);
+      border: 2px solid rgba(77,255,180,0.35);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      animation: pop 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .success-screen h2 {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .success-screen p { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(232,255,71,0.3);
+      border-radius: var(--radius);
+      padding: 0.75rem 2rem;
+      font-family: var(--font-head);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-outline:hover {
+      background: rgba(232,255,71,0.06);
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 580px) {
+      .card { padding: 2rem 1.5rem; }
+      h1    { font-size: 1.6rem; }
+      .toast { top: 1rem; right: 1rem; left: 1rem; max-width: unset; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast" role="alert">
+  <i class="toast-icon" id="toastIcon"></i>
+  <span id="toastMsg"></span>
+</div>
+
+<div class="card">
+
+  <!-- ── Success Screen ── -->
+  <div class="success-screen" id="successScreen">
+    <div class="checkmark-circle">✓</div>
+    <h2>You're all set!</h2>
+    <p>Your account has been created successfully.<br>Welcome aboard.</p>
+    <button class="btn-outline" onclick="resetForm()">← Back to form</button>
+  </div>
+
+  <!-- ── Form ── -->
+  <div id="formWrap">
+    <div class="header">
+      <div class="tag">Sign Up</div>
+      <h1>Create your account</h1>
+      <p class="subtitle">Fill in the details below to get started.</p>
+    </div>
+
+    <form id="mainForm" novalidate>
+
+      <!-- Full Name -->
+      <div class="form-group" id="g-name">
+        <label for="name">Full Name <span class="required">*</span></label>
+        <div class="input-wrap">
+          <input type="text" id="name" placeholder="Shivani" autocomplete="name"/>
+          <i class="field-icon" id="icon-name"></i>
+        </div>
+        <span class="msg" id="msg-name"></span>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group" id="g-email">
+        <label for="email">Email Address <span class="required">*</span></label>
+        <div class="input-wrap">
+          <input type="email" id="email" placeholder="shiv@example.com" autocomplete="email"/>
+          <i class="field-icon" id="icon-email"></i>
+        </div>
+        <span class="msg" id="msg-email"></span>
+      </div>
+
+      <!-- Phone (optional) -->
+      <div class="form-group" id="g-phone">
+        <label for="phone">Phone Number <span style="font-size:0.7rem;opacity:0.6">(optional)</span></label>
+        <div class="input-wrap">
+          <input type="tel" id="phone" placeholder="+91 98765 43210"/>
+          <i class="field-icon" id="icon-phone"></i>
+        </div>
+        <span class="msg" id="msg-phone"></span>
+      </div>
+
+      <!-- Role -->
+      <div class="form-group" id="g-role">
+        <label for="role">Your Role <span class="required">*</span></label>
+        <div class="input-wrap">
+          <select id="role">
+            <option value="">— Select a role —</option>
+            <option value="developer">Developer</option>
+            <option value="designer">Designer</option>
+            <option value="manager">Product Manager</option>
+            <option value="student">Student</option>
+            <option value="other">Other</option>
+          </select>
+          <i class="field-icon" id="icon-role"></i>
+        </div>
+        <span class="msg" id="msg-role"></span>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group" id="g-password">
+        <label for="password">Password <span class="required">*</span></label>
+        <div class="input-wrap">
+          <input type="password" id="password" placeholder="Min 8 characters"/>
+          <i class="field-icon" id="icon-password"></i>
+        </div>
+        <div class="strength-wrap">
+          <div class="strength-bar" id="strengthBar">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="strength-label" id="strengthLabel">Strength: —</div>
+        </div>
+        <span class="msg" id="msg-password"></span>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group" id="g-confirm">
+        <label for="confirm">Confirm Password <span class="required">*</span></label>
+        <div class="input-wrap">
+          <input type="password" id="confirm" placeholder="Re-enter password"/>
+          <i class="field-icon" id="icon-confirm"></i>
+        </div>
+        <span class="msg" id="msg-confirm"></span>
+      </div>
+
+      <!-- Terms -->
+      <div class="form-group" id="g-terms">
+        <div class="checkbox-group">
+          <input type="checkbox" id="terms"/>
+          <label for="terms">
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+          </label>
+        </div>
+        <span class="msg" id="msg-terms"></span>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">
+        <span class="btn-text">Create Account →</span>
+        <div class="spinner"></div>
+      </button>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  /* ── Shortcut ── */
+  const $ = id => document.getElementById(id);
+
+  /* ──────────────────────────────────────────────────────────
+     setField(id, 'error'|'success'|'clear', messageText)
+     Applies colour class to group, sets icon, sets message.
+  ────────────────────────────────────────────────────────── */
+  function setField(id, state, message) {
+    const group = $('g-' + id);
+    const msg   = $('msg-' + id);
+    const icon  = $('icon-' + id);
+
+    /* 1. Remove all previous state classes */
+    group.classList.remove('is-error', 'is-success');
+    msg.className  = 'msg';
+    msg.textContent = '';
+    if (icon) icon.textContent = '';
+
+    if (state === 'error') {
+      group.classList.add('is-error');
+      msg.classList.add('is-error');
+      msg.textContent = message || '';
+      if (icon) icon.textContent = '✕';
+    } else if (state === 'success') {
+      group.classList.add('is-success');
+      msg.classList.add('is-success');
+      msg.textContent = message || '';
+      if (icon) icon.textContent = '✓';
+    }
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     PASSWORD STRENGTH
+  ────────────────────────────────────────────────────────── */
+  const bars           = $('strengthBar').querySelectorAll('span');
+  const STRENGTH_COLORS = ['#ff5757','#ff9d4d','#e8ff47','#4dffb4'];
+  const STRENGTH_LABELS = ['Weak','Fair','Good','Strong'];
+
+  function calcStrength(pw) {
+    let s = 0;
+    if (pw.length >= 8)          s++;
+    if (/[A-Z]/.test(pw))        s++;
+    if (/[0-9]/.test(pw))        s++;
+    if (/[^A-Za-z0-9]/.test(pw)) s++;
+    return s;
+  }
+
+  $('password').addEventListener('input', function () {
+    const pw    = this.value;
+    const score = pw ? calcStrength(pw) : 0;
+    bars.forEach((b, i) => {
+      b.style.background = (pw && i < score) ? STRENGTH_COLORS[score - 1] : 'var(--border)';
+    });
+    $('strengthLabel').textContent = pw ? 'Strength: ' + STRENGTH_LABELS[score - 1] : 'Strength: —';
+    $('strengthLabel').style.color = pw ? STRENGTH_COLORS[score - 1] : 'var(--muted)';
+  });
+
+  /* ──────────────────────────────────────────────────────────
+     LIVE VALIDATION (on blur / change)
+  ────────────────────────────────────────────────────────── */
+  $('name').addEventListener('blur',     () => validateName(true));
+  $('email').addEventListener('blur',    () => validateEmail(true));
+  $('phone').addEventListener('blur',    () => validatePhone(true));
+  $('role').addEventListener('change',   () => validateRole(true));
+  $('password').addEventListener('blur', () => validatePassword(true));
+  $('confirm').addEventListener('blur',  () => validateConfirm(true));
+  $('terms').addEventListener('change',  () => validateTerms(true));
+
+  /* ──────────────────────────────────────────────────────────
+     VALIDATORS — each returns true (valid) or false (invalid)
+     Pass show=true to update the UI, false for silent check.
+  ────────────────────────────────────────────────────────── */
+  function validateName(show) {
+    const v = $('name').value.trim();
+    if (!v)           { if (show) setField('name','error','Name is required'); return false; }
+    if (v.length < 2) { if (show) setField('name','error','Must be at least 2 characters'); return false; }
+    if (!/^[a-zA-Z\s'\-]+$/.test(v)) { if (show) setField('name','error','Only letters, spaces and hyphens allowed'); return false; }
+    if (show) setField('name','success');
+    return true;
+  }
+
+  function validateEmail(show) {
+    const v = $('email').value.trim();
+    if (!v) { if (show) setField('email','error','Email is required'); return false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { if (show) setField('email','error','Enter a valid email address'); return false; }
+    if (show) setField('email','success');
+    return true;
+  }
+
+  function validatePhone(show) {
+    const v = $('phone').value.trim();
+    if (!v) { if (show) setField('phone','clear'); return true; } /* optional */
+    if (!/^[\d\s+\-()]{7,15}$/.test(v)) { if (show) setField('phone','error','Enter a valid phone number'); return false; }
+    if (show) setField('phone','success');
+    return true;
+  }
+
+  function validateRole(show) {
+    const v = $('role').value;
+    if (!v) { if (show) setField('role','error','Please select a role'); return false; }
+    if (show) setField('role','success');
+    return true;
+  }
+
+  function validatePassword(show) {
+    const v = $('password').value;
+    if (!v)           { if (show) setField('password','error','Password is required'); return false; }
+    if (v.length < 8) { if (show) setField('password','error','Minimum 8 characters required'); return false; }
+    if (show) setField('password','success');
+    return true;
+  }
+
+  function validateConfirm(show) {
+    const pw = $('password').value;
+    const c  = $('confirm').value;
+    if (!c)      { if (show) setField('confirm','error','Please confirm your password'); return false; }
+    if (pw !== c){ if (show) setField('confirm','error','Passwords do not match'); return false; }
+    if (show) setField('confirm','success','Passwords match ✓');
+    return true;
+  }
+
+  function validateTerms(show) {
+    if (!$('terms').checked) { if (show) setField('terms','error','You must agree to continue'); return false; }
+    if (show) setField('terms','success','Agreed');
+    return true;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     TOAST
+  ────────────────────────────────────────────────────────── */
+  let toastTimer = null;
+
+  function showToast(type, message) {
+    const toast = $('toast');
+    clearTimeout(toastTimer);
+
+    $('toastMsg').textContent  = message;
+    $('toastIcon').textContent = (type === 'success') ? '✓' : '✕';
+
+    /* Remove both classes, force reflow, then add the right one */
+    toast.classList.remove('show', 'toast-success', 'toast-error');
+    void toast.offsetWidth; /* reflow so transition retriggers */
+    toast.classList.add('toast-' + type, 'show');
+
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     SUBMIT
+  ────────────────────────────────────────────────────────── */
+  $('mainForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const allValid = [
+      validateName(true),
+      validateEmail(true),
+      validatePhone(true),
+      validateRole(true),
+      validatePassword(true),
+      validateConfirm(true),
+      validateTerms(true),
+    ].every(Boolean);
+
+    if (!allValid) {
+      showToast('error', 'Please fix the errors before submitting.');
+      return;
+    }
+
+    /* Simulate network request */
+    const btn = $('submitBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    await new Promise(r => setTimeout(r, 1800));
+
+    btn.classList.remove('loading');
+    btn.disabled = false;
+
+    /* Show success screen */
+    $('formWrap').style.display = 'none';
+    $('successScreen').classList.add('active');
+    showToast('success', 'Account created successfully!');
+  });
+
+  /* ──────────────────────────────────────────────────────────
+     RESET
+  ────────────────────────────────────────────────────────── */
+  function resetForm() {
+    $('mainForm').reset();
+
+    ['name','email','phone','role','password','confirm','terms'].forEach(id => {
+      setField(id, 'clear');
+    });
+
+    bars.forEach(b => b.style.background = 'var(--border)');
+    $('strengthLabel').textContent = 'Strength: —';
+    $('strengthLabel').style.color = 'var(--muted)';
+
+    $('successScreen').classList.remove('active');
+    $('formWrap').style.display = '';
+  }
+</script>
+</body>
+</html>

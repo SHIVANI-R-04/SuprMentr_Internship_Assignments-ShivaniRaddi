@@ -1,0 +1,116 @@
+**Assignment Name:** Internet Explorer
+
+**Description:** Draw and explain the Client–Server Architecture and trace what happens when you open a website.
+
+ 1. Client–Server Architecture
+
+**Client–Server Architecture** is a network model where:
+
+* The **client** (browser or user device) sends a request.
+* The **server** (web server) processes the request and sends a response.
+
+Example: When you open a browser like **Microsoft**’s Internet Explorer or any modern browser, your computer acts as the **client**.
+
+### Diagram of Client–Server Architecture
+
+```
++-------------------+        Internet        +----------------------+
+|      CLIENT       |  --------------------> |        SERVER        |
+| (Web Browser)     |        Request         | (Web Hosting Server) |
+|                   | <--------------------  |                      |
+|   HTML Viewer     |        Response        |  Database / Files    |
++-------------------+                        +----------------------+
+```
+
+**Client**
+
+* Sends request for a webpage
+* Example: Chrome, Edge, Firefox, Internet Explorer
+
+**Server**
+
+* Stores website files (HTML, CSS, JS, images)
+* Processes request and sends response
+
+ 2. What Happens When You Open a Website (Step-by-Step)
+
+When you type a website like
+`www.example.com` in the browser, the following steps occur:
+
+ Step 1 – URL Entered
+
+You type the website address (URL) in the browser.
+
+Example:
+
+https://www.example.com
+
+  Step 2 – DNS Lookup
+
+* The browser contacts a **DNS (Domain Name System)** server.
+* DNS converts the domain name into an **IP address**.
+
+Example:
+
+```
+www.example.com → 192.168.1.1
+ 
+ Step 3 – Connection to Server
+
+* The browser sends a request to the server using **HTTP/HTTPS** protocol.
+* A **TCP connection** is established between client and server.
+
+ Step 4 – Browser Sends Request
+
+The browser sends an **HTTP Request** asking for:
+
+* HTML page
+* Images
+* CSS files
+* JavaScript files
+
+  Step 5 – Server Processes Request
+
+The web server:
+
+* Receives the request
+* Finds the requested webpage files
+* Sends them back to the browser
+
+ Step 6 – Server Sends Response
+
+Server sends an **HTTP Response** containing:
+
+* HTML content
+* CSS styling
+* JavaScript code
+* Media files
+ 
+
+Step 7 – Browser Renders the Webpage
+
+The browser:
+
+* Reads HTML structure
+* Applies CSS styling
+* Executes JavaScript
+* Displays the final webpage on the screen
+
+  3. Flow Diagram (Website Loading Process)
+ 
+User Types URL
+      ↓
+Browser
+      ↓
+DNS Server (Find IP Address)
+      ↓
+Web Server (Request Sent)
+      ↓
+Server Processes Request
+      ↓
+Server Sends Response
+      ↓
+Browser Displays Website
+ 
+
+ 

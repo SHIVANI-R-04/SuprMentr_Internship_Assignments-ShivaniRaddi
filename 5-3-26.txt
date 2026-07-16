@@ -1,0 +1,122 @@
+1. Introduction
+
+In modern web development, websites are built using reusable components. In React, a webpage is divided into smaller parts called components. Each component represents a specific section of the user interface and can be reused across different parts of the application. This makes the code more organized, easier to maintain, and scalable.
+
+In this assignment, a popular website is analyzed and broken down into smaller components to understand how a React-based application can be structured.
+
+2. Selected Website
+
+The website selected for this assignment is Amazon.
+
+Amazon is a well-known e-commerce website that contains multiple sections such as a header, navigation bar, product listings, promotional banners, and footer sections. These sections can easily be divided into reusable components.
+
+3. Website Components
+3.1 Header Component
+
+The Header component is located at the top of the webpage and contains the main navigation elements.
+
+Subcomponents:
+
+Logo
+Search Bar
+Account/Login option
+Cart Icon
+3.2 Navigation Bar Component
+
+The Navigation Bar displays various categories and links that help users navigate through the website.
+
+Examples of navigation items:
+
+Electronics
+Fashion
+Customer Service
+Today's Deals
+
+Each of these can be treated as a NavItem component.
+
+3.3 Banner / Hero Section
+
+This section displays promotional banners, advertisements, or special offers. It is usually the first section visible to users when they open the homepage.
+
+3.4 Product Section
+
+The Product Section displays groups of products under different categories such as electronics, clothing, and home essentials.
+
+Each section contains multiple product cards.
+
+3.5 Product Card Component
+
+The Product Card is a reusable component used to display information about a single product.
+
+Elements in a Product Card:
+
+Product Image
+Product Name
+Price
+Rating
+Add to Cart Button
+
+This component is repeated multiple times across the website.
+
+3.6 Recommendation Section
+
+This section shows recommended products based on user preferences or browsing history. It also uses the same Product Card component to display items.
+
+3.7 Footer Component
+
+The Footer component is located at the bottom of the webpage and contains important links and information.
+
+Subcomponents:
+
+Footer Links
+Contact Information
+Privacy Policy
+Copyright Information
+
+
+4. Component Hierarchy (Structure)
+App
+│
+├── Header
+│   ├── Logo
+│   ├── SearchBar
+│   ├── Account
+│   └── CartIcon
+│
+├── Navbar
+│   └── NavItem
+│
+├── HeroBanner
+│
+├── ProductSection
+│   └── ProductCard
+│
+├── RecommendationSection
+│   └── ProductCard
+│
+└── Footer
+    ├── FooterLinks
+    └── Copyright
+
+
+5. Sketch of Website Structure
+-------------------------------------------------
+| LOGO | SEARCH BAR | ACCOUNT | CART |
+-------------------------------------------------
+| NAVIGATION MENU |
+-------------------------------------------------
+| HERO BANNER / OFFERS |
+-------------------------------------------------
+| PRODUCT SECTION |
+| [Product] [Product] [Product] |
+-------------------------------------------------
+| RECOMMENDED PRODUCTS |
+| [Product] [Product] [Product] |
+-------------------------------------------------
+| FOOTER LINKS |
+-------------------------------------------------
+
+
+6. Conclusion
+
+Breaking a website into components helps developers design structured and reusable user interfaces. By identifying components such as the header, navigation bar, product cards, and footer, developers can organize the application efficiently. This component-based approach is one of the key advantages of using React for building modern web applications.

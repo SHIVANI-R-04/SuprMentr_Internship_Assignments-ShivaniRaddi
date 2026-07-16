@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hello Server</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0d0f14;--surface:#151820;--card:#1c2030;--border:#2a3045;
+      --accent:#00e5a0;--accent2:#4f8fff;--accent3:#ff6b6b;--accent4:#ffb347;
+      --text:#e8ecf4;--muted:#8892a4;
+      --mono:'JetBrains Mono',monospace;--sans:'Syne',sans-serif;
+    }
+    body{background:var(--bg);font-family:var(--sans);color:var(--text);min-height:100vh;padding:2rem 1rem;}
+    .shell{max-width:760px;margin:0 auto;}
+ 
+    .top-bar{display:flex;align-items:center;gap:10px;margin-bottom:2rem;animation:fadeDown 0.5s ease;}
+    .dot{width:12px;height:12px;border-radius:50%;}
+    .dot.red{background:#ff5f57;} .dot.yellow{background:#ffbd2e;} .dot.green{background:#27c93f;}
+    .top-title{margin-left:auto;margin-right:auto;font-family:var(--mono);font-size:13px;color:var(--muted);}
+ 
+    .hero{text-align:center;margin-bottom:2.5rem;animation:fadeUp 0.6s ease 0.1s both;}
+    .server-badge{display:inline-flex;align-items:center;gap:8px;background:#0d1a12;border:1px solid #00e5a040;border-radius:999px;padding:6px 16px;font-family:var(--mono);font-size:12px;color:var(--accent);margin-bottom:1rem;}
+    .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s ease infinite;}
+    h1{font-size:2rem;font-weight:700;letter-spacing:-0.03em;color:var(--text);line-height:1.2;}
+    h1 span{color:var(--accent);}
+    .sub{font-size:14px;color:var(--muted);margin-top:0.5rem;font-family:var(--mono);}
+ 
+    .port-chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 18px;font-family:var(--mono);font-size:13px;color:var(--muted);margin-bottom:2rem;animation:fadeUp 0.6s ease 0.2s both;}
+    .port-chip strong{color:var(--accent2);}
+ 
+    .routes-grid{display:grid;gap:12px;animation:fadeUp 0.6s ease 0.3s both;}
+    .route-card{
+      background:var(--card);border:1px solid var(--border);border-radius:14px;
+      padding:1.1rem 1.25rem;display:flex;align-items:center;gap:14px;
+      cursor:pointer;transition:border-color 0.2s,transform 0.2s,background 0.2s;
+    }
+    .route-card:hover{transform:translateY(-2px);}
+    .route-card:hover.c0{border-color:#00e5a060;background:#151f1a;}
+    .route-card:hover.c1{border-color:#4f8fff60;background:#141b26;}
+    .route-card:hover.c2{border-color:#ff6b6b60;background:#201616;}
+    .route-card:hover.c3{border-color:#ffb34760;background:#1e1a12;}
+    .route-card:active{transform:scale(0.99);}
+ 
+    .method-badge{font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;white-space:nowrap;background:#0d2018;color:var(--accent);border:1px solid #00e5a030;}
+    .route-path{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--text);}
+    .route-desc{font-size:13px;color:var(--muted);margin-top:2px;}
+    .route-arrow{margin-left:auto;color:var(--muted);font-size:18px;transition:transform 0.2s,color 0.2s;}
+    .route-card:hover .route-arrow{transform:translateX(4px);}
+    .route-card:hover.c0 .route-arrow{color:var(--accent);}
+    .route-card:hover.c1 .route-arrow{color:var(--accent2);}
+    .route-card:hover.c2 .route-arrow{color:var(--accent3);}
+    .route-card:hover.c3 .route-arrow{color:var(--accent4);}
+ 
+    .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .sd0{background:var(--accent);}
+    .sd1{background:var(--accent2);}
+    .sd2{background:var(--accent3);}
+    .sd3{background:var(--accent4);}
+ 
+    .response-box{
+      margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+      overflow:hidden;animation:fadeUp 0.4s ease;
+    }
+    .res-header{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .res-status{font-family:var(--mono);font-size:12px;color:#27c93f;font-weight:600;}
+    .res-label{font-family:var(--mono);font-size:11px;color:var(--muted);}
+    .res-body{padding:14px;font-family:var(--mono);font-size:14px;color:var(--accent);line-height:1.6;}
+ 
+    .terminal{
+      background:var(--surface);border:1px solid var(--border);border-radius:14px;
+      padding:1.25rem;margin-top:2rem;font-family:var(--mono);font-size:13px;
+      animation:fadeUp 0.6s ease 0.4s both;
+    }
+    .t-line{margin:3px 0;line-height:1.7;}
+    .t-cmd{color:var(--accent);}
+    .t-info{color:var(--accent2);}
+    .t-muted{color:var(--muted);}
+    .t-success{color:#27c93f;}
+    .cursor{display:inline-block;width:9px;height:15px;background:var(--accent);border-radius:1px;animation:blink 1s step-end infinite;vertical-align:text-bottom;margin-left:2px;}
+ 
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.85);}}
+    @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <div class="top-bar">
+    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+    <span class="top-title">node server.js</span>
+  </div>
+ 
+  <div class="hero">
+    <div class="server-badge"><span class="pulse"></span> Server Running</div>
+    <h1>Hello <span>Server</span></h1>
+    <p class="sub">Node.js HTTP Server — Assignment 23/03/2026</p>
+  </div>
+ 
+  <div style="display:flex;justify-content:center;">
+    <div class="port-chip">Listening on <strong>localhost:3000</strong></div>
+  </div>
+ 
+  <div style="font-size:12px;color:var(--muted);font-family:var(--mono);margin-bottom:10px;letter-spacing:0.05em;">AVAILABLE ROUTES</div>
+  <div class="routes-grid" id="routes"></div>
+ 
+  <div id="response-area"></div>
+ 
+  <div class="terminal">
+    <div class="t-line"><span class="t-cmd">$</span> <span style="color:var(--text);">node server.js</span></div>
+    <div class="t-line t-success">✓ Server running at http://localhost:3000</div>
+    <div class="t-line t-muted">  Available routes:</div>
+    <div class="t-line t-info">  → GET /</div>
+    <div class="t-line t-info">  → GET /about</div>
+    <div class="t-line t-info">  → GET /contact</div>
+    <div class="t-line t-info">  → GET /greet</div>
+    <div class="t-line" id="log-line" style="color:var(--muted);">Waiting for requests<span class="cursor"></span></div>
+  </div>
+</div>
+ 
+<script>
+  const routes = [
+    {path:'/',desc:'Home — welcome message',msg:'Hello, World! Welcome to the Home Page 🏠',c:'c0',sd:'sd0'},
+    {path:'/about',desc:'About — project info',msg:'About Us: We are learning Node.js servers! 📖',c:'c1',sd:'sd1'},
+    {path:'/contact',desc:'Contact — get in touch',msg:'Contact Us: reach us at hello@example.com 📬',c:'c2',sd:'sd2'},
+    {path:'/greet',desc:'Greet — friendly message',msg:'Hey there! Greetings from the server 👋',c:'c3',sd:'sd3'},
+  ];
+ 
+  const grid = document.getElementById('routes');
+  const area = document.getElementById('response-area');
+  const logLine = document.getElementById('log-line');
+ 
+  routes.forEach(r => {
+    const card = document.createElement('div');
+    card.className = `route-card ${r.c}`;
+    card.innerHTML = `
+      <span class="status-dot ${r.sd}"></span>
+      <span class="method-badge">GET</span>
+      <div><div class="route-path">${r.path}</div><div class="route-desc">${r.desc}</div></div>
+      <span class="route-arrow">→</span>
+    `;
+    card.onclick = () => {
+      logLine.innerHTML = `<span style="color:var(--accent2)">GET</span> <span style="color:var(--text)">${r.path}</span> <span style="color:#27c93f">200 OK</span><span class="cursor"></span>`;
+      area.innerHTML = `
+        <div class="response-box">
+          <div class="res-header">
+            <span class="res-status">200 OK</span>
+            <span class="res-label">Content-Type: text/plain</span>
+            <span class="res-label" style="margin-left:auto">GET ${r.path}</span>
+          </div>
+          <div class="res-body">${r.msg}</div>
+        </div>`;
+    };
+    grid.appendChild(card);
+  });
+</script>
+</body>
+</html>

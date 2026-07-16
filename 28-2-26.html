@@ -1,0 +1,101 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>Student Manager</title>
+    <style>
+    body {
+        font-family: Arial;
+        text-align: center;
+    }
+
+    input {
+        width: 200px;
+        padding: 5px;
+    } 
+
+    button {
+        padding: 7px 15px;
+        background-color: green;
+        color: white;
+        border: none;
+    }
+
+    table {
+        margin: auto;
+        margin-top: 20px;
+        width: 50%;
+    }
+</style>
+</head>
+<body>
+
+    <h2>Student Manager</h2>
+
+    <input type="text" id="name" placeholder="Enter Name"><br><br>
+    <input type="number" id="roll" placeholder="Enter Roll Number"><br><br>
+    <input type="number" id="m1" placeholder="Marks 1"><br><br>
+    <input type="number" id="m2" placeholder="Marks 2"><br><br>
+    <input type="number" id="m3" placeholder="Marks 3"><br><br>
+
+    <button onclick="addStudent()">Add Student</button>
+
+    <h3>Student List</h3>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Roll</th>
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <script>
+
+let students = [];   // ARRAY to store all students
+
+function addStudent() {
+
+    // Get values from input
+    let name = document.getElementById("name").value;
+    let roll = document.getElementById("roll").value;
+    let m1 = Number(document.getElementById("m1").value);
+    let m2 = Number(document.getElementById("m2").value);
+    let m3 = Number(document.getElementById("m3").value);
+
+    // Store marks in array
+    let marks = [m1, m2, m3];
+
+    // Calculate total using loop
+    let total = 0;
+    for (let i = 0; i < marks.length; i++) {
+        total = total + marks[i];
+    }
+
+    // Calculate average
+    let average = total / marks.length;
+
+    // Create student object
+    let student = {
+        name: name,
+        roll: roll,
+        marks: marks,
+        average: average
+    };
+
+    // Add object to students array
+    students.push(student);
+
+    // Show in table
+    let table = document.getElementById("tableBody");
+    let row = table.insertRow();
+
+    row.insertCell(0).innerHTML = name;
+    row.insertCell(1).innerHTML = roll;
+    row.insertCell(2).innerHTML = average.toFixed(2);
+
+}
+</script>
+</body>
+</html>
